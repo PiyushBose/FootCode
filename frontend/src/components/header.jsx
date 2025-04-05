@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 const style = {
     display : "flex",
     justifyContent : "space-between",
@@ -37,8 +39,10 @@ export function Header() {
             display : "flex",
             fontWeight : "900"
         }}>
-            <p style = {{color : "#1e601b"}}>FOOT</p>
-            <p>code</p>
+            <p>
+                <Link to = '/' style = {{textDecoration : "none", color : "#1e601b"}}>FOOT</Link>
+            </p>
+            <p><Link to = '/' style = {{textDecoration : "none", color : "#071210"}}>code</Link></p>
         </button>
         <div style = {{
             display : "flex",
@@ -46,8 +50,16 @@ export function Header() {
             width : "15%",
             padding : "15px"
         }}>
-            <button style = {loginButtonStyle}>Login</button>
-            <button style = {signupButtonStyle}>Sign up</button>
+            <Link to = '/login' style = {{textDecoration : "none"}}>
+                <button style = {loginButtonStyle}>
+                    Login
+                </button>
+            </Link>
+            <Link to = '/signup' style = {{textDecoration : "none"}}>
+                <button style = {signupButtonStyle}>
+                    Sign up
+                </button>
+            </Link>
         </div>
     </div>
 }

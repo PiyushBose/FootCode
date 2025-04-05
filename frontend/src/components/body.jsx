@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom"
+
 const style = {
     height : "814px",
     display : "flex",
     flexDirection : "column",
     justifyContent : "center",
-    alignItems : "center"
+    alignItems : "center",
+    fontFamily : "Arial"
 }
 
 const loginButtonStyle = {
@@ -31,7 +34,7 @@ const paraStyle = {
     margin : "0"
 }
 
-export function Body() {
+export function LandingBody() {
     return <div style = {style}>
         <div style = {{
             fontSize : "42px",
@@ -51,7 +54,8 @@ export function Body() {
                 </p>
             <p style = {{
                 margin : "0",
-                paddingBottom : "10px"
+                paddingBottom : "10px",
+                color : "#071210"
             }}>
                 code
             </p>
@@ -64,8 +68,16 @@ export function Body() {
             width : "12%",
             padding : "15px"
         }}>
-            <button style = {loginButtonStyle}>Login</button>
-            <button style = {signupButtonStyle}>Sign up</button>
+            <Link to = '/login' style = {{textDecoration : "none"}}>
+                <button style = {loginButtonStyle}>
+                    Login
+                </button>
+            </Link>
+            <Link to = '/signup' style = {{textDecoration : "none"}}>
+                <button style = {signupButtonStyle}>
+                    Sign up
+                </button>
+            </Link>
         </div>
     </div>
 }
