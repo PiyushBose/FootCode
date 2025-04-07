@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Header } from "../components/header";
+import axios from "axios";
 
 const style = {
     height : "814px",
@@ -29,6 +31,22 @@ const inputStyle = {
 }
 
 export function Signup() {
+
+    const [email, setEmail] = useState('');
+    const [password, setPass] = useState('');
+    const [conPassword, setConPass] = useState('');
+
+    const submit = async (e) => {
+        e.preventDefault()
+
+        try {
+            await axios.post("http://localhost:3000/api/signup", {email, password, conPassword})
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+
     return <div style = {{backgroundColor : "#f3fcf1"}}>
         <Header />
         <div style = {style}>
@@ -69,21 +87,21 @@ export function Signup() {
                     }}>
                         Email
                     </p>
-                    <input type="email" placeholder="name@email.com" style = {inputStyle}></input>
+                    <input type="email" onChange = {(e) => {setEmail(e.target.value)}} placeholder="name@email.com" style = {inputStyle}></input>
                     <p style = {{
                         margin : "10px 5px 5px 0",
                         fontSize : "20px"
                     }}>
                         Password
                     </p>
-                    <input type="password" placeholder="••••••••••" style = {inputStyle}></input>
+                    <input type="password" onChange = {(e) => {setPass(e.target.value)}} placeholder="••••••••••" style = {inputStyle}></input>
                     <p style = {{
                         margin : "10px 5px 5px 0",
                         fontSize : "20px"
                     }}>
                         Confirm Password
                     </p>
-                    <input type="password" placeholder="••••••••••" style = {inputStyle}></input>
+                    <input type="password" onChange = {(e) => {setConPass(e.target.value)}} placeholder="••••••••••" style = {inputStyle}></input>
                 </div>
 
                 <div style = {{
@@ -95,7 +113,7 @@ export function Signup() {
                     visibility : "hidden"
                 }}>Error</div>
 
-                <button style = {{
+                <button onClick = {submit} style = {{
                     width : "100%",
                     height : "13%",
                     marginTop : "10px",

@@ -3,8 +3,8 @@ import { Link } from "react-router-dom"
 const style = {
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "150px",
-    paddingRight : "150px",
+    paddingLeft : "8vw",
+    paddingRight : "8vw",  
     margin : "0",
     borderBottom : "2px solid #1e601b"
 }

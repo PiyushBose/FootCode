@@ -1,3 +1,5 @@
+import { useState } from "react";
+import axios from 'axios';
 import { Header } from "../components/header";
 
 const style = {
@@ -13,7 +15,7 @@ const boxStyle = {
     borderRadius : "10px",
     border : "2px solid #92e88d",
     backgroundColor  : "#e0fade",
-    width : "20vw",
+    width : "400px",
     padding : "20px",
     height : "30vh"
 }
@@ -29,6 +31,21 @@ const inputStyle = {
 }
 
 export function Login() {
+
+    const [email, setEmail] = useState('');
+    const [password, setPass] = useState('');
+
+    const submit = async (e) => {
+        e.preventDefault()
+
+        try {
+            await axios.post("http://localhost:3000/api/login", {email, password})
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+
     return <div style = {{backgroundColor : "#f3fcf1"}}>
         <Header />
         <div style = {style}>
@@ -69,14 +86,14 @@ export function Login() {
                     }}>
                         Email
                     </p>
-                    <input type="email" placeholder="name@email.com" style = {inputStyle}></input>
+                    <input type="email" onChange = {(e) => {setEmail(e.target.value)}} placeholder="name@email.com" style = {inputStyle}></input>
                     <p style = {{
                         margin : "10px 5px 5px 0",
                         fontSize : "20px"
                     }}>
                         Password
                     </p>
-                    <input type="password" placeholder="••••••••••" style = {inputStyle}></input>
+                    <input type="password" onChange = {(e) => {setPass(e.target.value)}} placeholder="••••••••••" style = {inputStyle}></input>
                 </div>
 
                 <div style = {{
@@ -88,7 +105,7 @@ export function Login() {
                     visibility : "hidden"
                 }}>Error</div>
 
-                <button style = {{
+                <button onClick = {submit} style = {{
                     width : "100%",
                     height : "13%",
                     marginTop : "10px",
