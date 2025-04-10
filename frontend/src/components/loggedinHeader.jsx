@@ -40,7 +40,10 @@ export function AuthHeader() {
             left : "80px"
         }}>
             <Link to = '/' style = {{textDecoration : "none"}}>
-                <button style = {logoutButtonStyle}>
+                <button onClick = {() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("leagueId")
+                }} style = {logoutButtonStyle}>
                     Logout
                 </button>
             </Link>

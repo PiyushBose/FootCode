@@ -1,7 +1,8 @@
 export function Table({ table }) {
     return (
         <div style = {{
-            border : "2px solid #20791c"
+            border : "2px solid #20791c",
+            marginBottom : "70px"
         }}>
             <div style = {{
                 display : "flex",
@@ -9,10 +10,11 @@ export function Table({ table }) {
                 fontSize : "20px",
                 backgroundColor : "#20791c",
                 color : "#f3fcf1",
-                padding : "0 30px 0 70px"
+                padding : "0 30px 0 100px",
+                fontFamily : "Arial"
             }}>
                 <p style = {{
-                    marginRight : "75px"
+                    marginRight : "95px"
                 }}>Club</p>
                 <p>MP</p>
                 <p>W</p>
@@ -32,12 +34,13 @@ export function Table({ table }) {
                         fontSize : "18px",
                         width : "100%",
                         color : "#092b0b",
-                        borderBottom : "2px solid #20791c",
+                        borderTop : "2px solid #20791c",
+                        fontFamily : "Arial"
                     }}>
                         <div style = {{
                             display : "flex",
                             justifyContent : "space-between",
-                            width : "15%",
+                            width : "20%",
                             paddingLeft : "30px"
                         }}>
                             <p>{team.position}</p>

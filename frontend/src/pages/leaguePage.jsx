@@ -77,12 +77,15 @@ export function LeagueInfo() {
                     width : "55%",
                     paddingLeft : "80px"
                 }}>
-                    <h2 style={{ fontFamily: "Arial", margin: "50px", marginLeft: "30px" }}>Table</h2>
+                    <h2 style={{ fontFamily: "Arial", margin: "50px", marginLeft: "30px", fontSize : "30px" }}>Table</h2>
                     <Table table={table} />
                 </div>
 
-                <div>
-                    <h2 style={{ fontFamily: "Arial", margin: "50px", marginLeft: "30px" }}>Top Scorers</h2>
+                <div style = {{
+                    padding : "0 80px 0 80px",
+                    width : "30%"
+                }}>
+                    <h2 style={{ fontFamily: "Arial", margin: "50px", marginLeft: "30px", fontSize : "30px" }}>Top Scorers</h2>
                     <Players players={stats} />
                 </div>
             </div>

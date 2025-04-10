@@ -1,19 +1,31 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-    email : {type : String, unique : true, required : true},
-    password : String,
-    followedLeagues : [{
-        type : Number
-    }],
-    followedTeams : [{
-        type : Number
-    }]
-})
+const followedLeagueSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    required: true
+  },
+  followed: {
+    type: Boolean,
+    default: false
+  }
+});
 
-const UserModel = mongoose.model('user', userSchema);
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  followedLeagues: [followedLeagueSchema]
+});
+
+const UserModel = mongoose.model('User', userSchema);
 
 module.exports = {
-    UserModel
-}
+  UserModel
+};
