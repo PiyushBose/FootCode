@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 const { UserModel } = require('./db.js');
 const { JWT_SECRET } = require('./config.js');
 const cors = require('cors');
+const { z } = require('zod');
+const { signupSchema, loginSchema, followSchema } = require('./zodSchemas.js');
+
 const app = express();
 const userRouter = Router();
 
@@ -17,11 +20,13 @@ userRouter.get('/', cors(), async (req, res) => {
 });
 
 userRouter.post('/signup', async (req, res) => {
-    const { email, password, conPassword } = req.body;
+    const parsed = signupSchema.safeParse(req.body);
 
-    if (!email || !password || !conPassword) {
-        return res.status(400).json({ message: "All fields are required" });
+    if (!parsed.success) {
+        return res.status(400).json({ message: parsed.error.errors[0].message });
     }
+
+    const { email, password, conPassword } = parsed.data;
 
     if (password !== conPassword) {
         return res.status(400).json({ message: "Passwords do not match" });
@@ -41,7 +46,6 @@ userRouter.post('/signup', async (req, res) => {
         });
 
         const user = await UserModel.findOne({ email });
-
         const token = jwt.sign({ id: user._id }, JWT_SECRET);
 
         res.json({ token });
@@ -52,7 +56,13 @@ userRouter.post('/signup', async (req, res) => {
 });
 
 userRouter.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const parsed = loginSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+        return res.status(400).json({ message: parsed.error.errors[0].message });
+    }
+
+    const { email, password } = parsed.data;
 
     const user = await UserModel.findOne({ email });
 
@@ -106,12 +116,14 @@ const verifyToken = (req, res, next) => {
 };
 
 userRouter.post('/follow', verifyToken, async (req, res) => {
-    const { leagueId, follow } = req.body;
-    const userId = req.user.id;
+    const parsed = followSchema.safeParse(req.body);
 
-    if (!leagueId || typeof follow !== 'boolean') {
-        return res.status(400).json({ message: 'Bad Request: Missing or invalid parameters' });
+    if (!parsed.success) {
+        return res.status(400).json({ message: parsed.error.errors[0].message });
     }
+
+    const { leagueId, follow } = parsed.data;
+    const userId = req.user.id;
 
     try {
         const user = await UserModel.findById(userId);
