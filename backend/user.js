@@ -2,7 +2,7 @@ const express = require('express');
 const { Router } = require("express");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { userModel, UserModel } = require('./db.js');
+const { UserModel } = require('./db.js');
 const { JWT_SECRET } = require('./config.js');
 const cors = require('cors');
 const app = express();
@@ -37,10 +37,20 @@ userRouter.post('/signup', async (req, res) => {
             followedTeams: []
         });
 
-        res.status(201).json({ message: "Signup succeeded" });
+        const user = await UserModel.findOne({
+            email
+        });
+
+        const token = jwt.sign({
+            id : user._id
+        }, JWT_SECRET);
+
+        res.json({
+            token : token
+        })
     } catch (e) {
-        console.error("Signup Error:", e); // log it!
-        res.status(500).json({ message: "Signup failed" });
+        console.error("Signup Error:", e); 
+        res.status(500).json({ message: "Account exist, Login" });
     }
 });
 
@@ -54,7 +64,7 @@ userRouter.post('/login', async (req, res) => {
 
     if(!user){
         res.status(403).json({
-            message : "user doesnt exist"
+            message : "User doesn't exist, Sign up"
         })
         return;
     }
@@ -75,6 +85,24 @@ userRouter.post('/login', async (req, res) => {
         })
     }
 });
+
+userRouter.get('/me', async (req, res) => {
+    const token = req.headers.token; 
+
+    try {
+        const decodedInfo = jwt.verify(token, JWT_SECRET);
+        const id = decodedInfo.id;
+
+        const user = await UserModel.findOne({ _id : id });
+
+        res.json({ user });
+    } catch (e) {
+        res.status(403).json({
+            message: "User not found or token invalid"
+        });
+    }
+});
+
 
 module.exports = {
     userRouter : userRouter

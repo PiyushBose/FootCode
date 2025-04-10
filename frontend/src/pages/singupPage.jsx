@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Header } from "../components/header";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const style = {
     height : "814px",
@@ -15,7 +16,7 @@ const boxStyle = {
     borderRadius : "10px",
     border : "2px solid #92e88d",
     backgroundColor  : "#e0fade",
-    width : "20vw",
+    width : "400px",
     padding : "20px",
     height : "40vh"
 }
@@ -35,15 +36,36 @@ export function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPass] = useState('');
     const [conPassword, setConPass] = useState('');
+    const [error, setError] = useState('');
+
+    const navigate = useNavigate();
 
     const submit = async (e) => {
         e.preventDefault()
 
         try {
-            await axios.post("http://localhost:3000/api/signup", {email, password, conPassword})
+            const response = await axios.post("http://localhost:3000/api/signup", {email, password, conPassword});
+
+            console.log(response)
+
+            if(!response.data.message) {
+                localStorage.setItem("token", response.data.token);
+                navigate("/leagues");
+            }
+
         } catch(e) {
-            console.log(e);
+            setError(e.response.data.message);
         }
+    }
+
+    function ErrorBlock() {
+        return <div style = {{
+                color : "red",
+                fontSize : "12px",
+                margin : "0",
+                padding : "0",
+                marginTop : "5px"
+            }}>{error}</div>
     }
 
 
@@ -104,14 +126,7 @@ export function Signup() {
                     <input type="password" onChange = {(e) => {setConPass(e.target.value)}} placeholder="••••••••••" style = {inputStyle}></input>
                 </div>
 
-                <div style = {{
-                    color : "red",
-                    fontSize : "12px",
-                    margin : "0",
-                    padding : "0",
-                    marginTop : "5px",
-                    visibility : "hidden"
-                }}>Error</div>
+                <ErrorBlock />
 
                 <button onClick = {submit} style = {{
                     width : "100%",

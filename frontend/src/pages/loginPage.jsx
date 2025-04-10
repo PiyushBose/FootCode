@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from 'axios';
 import { Header } from "../components/header";
+import { useNavigate } from "react-router-dom";
 
 const style = {
     height : "814px",
@@ -34,15 +35,34 @@ export function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPass] = useState('');
+    const [error, setError] = useState('');
+
+    const navigate = useNavigate();
 
     const submit = async (e) => {
         e.preventDefault()
 
         try {
-            await axios.post("http://localhost:3000/api/login", {email, password})
+            const response = await axios.post("http://localhost:3000/api/login", {email, password});
+
+            if(!response.data.message) {
+                localStorage.setItem("token", response.data.token);
+                navigate("/leagues");
+            }
         } catch(e) {
-            console.log(e);
+            console.log(e)
+            setError(e.response.data.message);
         }
+    }
+
+    function ErrorBlock() {
+        return <div style = {{
+                color : "red",
+                fontSize : "12px",
+                margin : "0",
+                padding : "0",
+                marginTop : "5px"
+            }}>{error}</div>
     }
 
 
@@ -96,14 +116,7 @@ export function Login() {
                     <input type="password" onChange = {(e) => {setPass(e.target.value)}} placeholder="••••••••••" style = {inputStyle}></input>
                 </div>
 
-                <div style = {{
-                    color : "red",
-                    fontSize : "12px",
-                    margin : "0",
-                    padding : "0",
-                    marginTop : "5px",
-                    visibility : "hidden"
-                }}>Error</div>
+                <ErrorBlock />
 
                 <button onClick = {submit} style = {{
                     width : "100%",
