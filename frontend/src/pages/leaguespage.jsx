@@ -6,111 +6,129 @@ import { useEffect, useState } from "react";
 const initialLeagues = [2001, 2002, 2003, 2014, 2015, 2017, 2019, 2021];
 
 export function Leagues() {
-    const [competitions, setCompetitions] = useState([]);
-    const [followedLeagues, setFollowedLeagues] = useState([]);
+  const [competitions, setCompetitions] = useState([]);
+  const [followedLeagues, setFollowedLeagues] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-    useEffect(() => {
-        async function fetchUserInfo() {
-            try {
-                const response = await axios.get('http://localhost:3000/api/me', {
-                    headers: {
-                        token: localStorage.getItem("token")
-                    }
-                });
-
-                const followed = response.data.user.followedLeagues || [];
-                setFollowedLeagues(followed);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-
-        async function fetchCompetitions() {
-            try {
-                const response = await axios.get("http://localhost:5000/api/competitions");
-                const filtered = response.data.competitions
-                    .filter(c => initialLeagues.includes(c.id))
-                    .sort((a, b) => a.id - b.id);
-                setCompetitions(filtered);
-            } catch (error) {
-                console.error("Error fetching competitions:", error);
-            }
-        }
-
-        fetchUserInfo();
-        fetchCompetitions();
-    }, []);
-
-    function isFollowed(leagueId) {
-        return followedLeagues.some(league => league.id === leagueId && league.followed);
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= 768);
     }
 
-    async function handleToggleFollow(id, follow) {
-        try {
-            await axios.post("http://localhost:3000/api/follow", {
-                leagueId: id,
-                follow: follow
-            }, {
-                headers: {
-                    token: localStorage.getItem("token")
-                }
-            });
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-            setFollowedLeagues(prev =>
-                prev.map(league =>
-                    league.id === id ? { ...league, followed: follow } : league
-                )
-            );
-        } catch (e) {
-            console.log("Error toggling follow:", e);
-        }
+  useEffect(() => {
+    async function fetchUserInfo() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/me', {
+          headers: {
+            token: localStorage.getItem("token")
+          }
+        });
+
+        const followed = response.data.user.followedLeagues || [];
+        setFollowedLeagues(followed);
+      } catch (e) {
+        console.log(e);
+      }
     }
 
-    const followedCompetitions = competitions.filter(comp => isFollowed(comp.id));
+    async function fetchCompetitions() {
+      try {
+        const response = await axios.get("http://localhost:5000/api/competitions");
+        const filtered = response.data.competitions
+          .filter(c => initialLeagues.includes(c.id))
+          .sort((a, b) => a.id - b.id);
+        setCompetitions(filtered);
+      } catch (error) {
+        console.error("Error fetching competitions:", error);
+      }
+    }
 
-    return (
-        <div style={{ backgroundColor: "#f3fcf1" }}>
-            <AuthHeader />
+    fetchUserInfo();
+    fetchCompetitions();
+  }, []);
 
-            {followedCompetitions.length > 0 && (
-                <div>
-                    <h1 style={{ fontFamily: "Arial", margin: "50px", marginLeft: "120px" }}>Followed Leagues</h1>
-                    <div style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        overflow: "hidden"
-                    }}>
-                        {followedCompetitions.map((comp, index) => (
-                            <Card
-                                key={index}
-                                image={comp.emblem}
-                                following={true}
-                                data={comp}
-                                onToggleFollow={handleToggleFollow}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
+  function isFollowed(leagueId) {
+    return followedLeagues.some(league => league.id === leagueId && league.followed);
+  }
 
-            <div style={{ backgroundColor: "#f3fcf1", paddingBottom: "50px" }}>
-                <h1 style={{ fontFamily: "Arial", margin: "50px", marginLeft: "120px" }}>All Leagues</h1>
-                <div style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    overflow: "hidden"
-                }}>
-                    {competitions.map((comp, index) => (
-                        <Card
-                            key={index}
-                            image={comp.emblem}
-                            following={isFollowed(comp.id)}
-                            data={comp}
-                            onToggleFollow={handleToggleFollow}
-                        />
-                    ))}
-                </div>
-            </div>
+  async function handleToggleFollow(id, follow) {
+    try {
+      await axios.post("http://localhost:3000/api/follow", {
+        leagueId: id,
+        follow: follow
+      }, {
+        headers: {
+          token: localStorage.getItem("token")
+        }
+      });
+
+      setFollowedLeagues(prev =>
+        prev.map(league =>
+          league.id === id ? { ...league, followed: follow } : league
+        )
+      );
+    } catch (e) {
+      console.log("Error toggling follow:", e);
+    }
+  }
+
+  const followedCompetitions = competitions.filter(comp => isFollowed(comp.id));
+
+  const titleStyle = {
+    fontFamily: "Arial",
+    margin: isMobile ? "20px" : "50px",
+    marginLeft: isMobile ? "20px" : "120px",
+    fontSize: isMobile ? "22px" : "32px"
+  };
+
+  const gridStyle = {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: isMobile ? "center" : "space-evenly",
+    paddingLeft: isMobile ? "10px" : "50px",
+    paddingRight: isMobile ? "10px" : "50px",
+    gap: isMobile ? "10px" : "20px"
+  };
+
+  return (
+    <div style={{ backgroundColor: "#f3fcf1" }}>
+      <AuthHeader />
+
+      {followedCompetitions.length > 0 && (
+        <div>
+          <h1 style={titleStyle}>Followed Leagues</h1>
+          <div style={gridStyle}>
+            {followedCompetitions.map((comp, index) => (
+              <Card
+                key={index}
+                image={comp.emblem}
+                following={true}
+                data={comp}
+                onToggleFollow={handleToggleFollow}
+              />
+            ))}
+          </div>
         </div>
-    );
+      )}
+
+      <div style={{ backgroundColor: "#f3fcf1", paddingBottom: "50px" }}>
+        <h1 style={titleStyle}>All Leagues</h1>
+        <div style={gridStyle}>
+          {competitions.map((comp, index) => (
+            <Card
+              key={index}
+              image={comp.emblem}
+              following={isFollowed(comp.id)}
+              data={comp}
+              onToggleFollow={handleToggleFollow}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
