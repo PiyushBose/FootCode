@@ -2,6 +2,8 @@ import axios from "axios";
 import { AuthHeader } from "../components/loggedinHeader";
 import { Card } from "../components/card";
 import { useEffect, useState } from "react";
+import { backendUrl, proxyUrl } from "../url.js";
+import { Header } from "../components/header.jsx";
 
 const initialLeagues = [2001, 2002, 2003, 2014, 2015, 2017, 2019, 2021];
 
@@ -22,7 +24,7 @@ export function Leagues() {
   useEffect(() => {
     async function fetchUserInfo() {
       try {
-        const response = await axios.get('http://localhost:3000/api/me', {
+        const response = await axios.get(`${backendUrl}/api/me`, {
           headers: {
             token: localStorage.getItem("token")
           }
@@ -37,7 +39,7 @@ export function Leagues() {
 
     async function fetchCompetitions() {
       try {
-        const response = await axios.get("http://localhost:5000/api/competitions");
+        const response = await axios.get(`${proxyUrl}/api/competitions`);
         const filtered = response.data.competitions
           .filter(c => initialLeagues.includes(c.id))
           .sort((a, b) => a.id - b.id);
@@ -57,7 +59,7 @@ export function Leagues() {
 
   async function handleToggleFollow(id, follow) {
     try {
-      await axios.post("http://localhost:3000/api/follow", {
+      await axios.post(`${backendUrl}/api/follow`, {
         leagueId: id,
         follow: follow
       }, {
@@ -96,7 +98,7 @@ export function Leagues() {
 
   return (
     <div style={{ backgroundColor: "#f3fcf1" }}>
-      <AuthHeader />
+      {localStorage.getItem("token") ? <AuthHeader /> : <Header />}
 
       {followedCompetitions.length > 0 && (
         <div>

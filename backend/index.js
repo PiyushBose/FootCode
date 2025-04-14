@@ -17,12 +17,15 @@ app.use('/api', userRouter);
 
 proxy.use("/api/competitions", proxyRouter);
 
-proxy.listen(5000, () => console.log("Proxy server started on port 5000"));
+const port = process.env.PORT1 || 3000;
+const proxyPort = process.env.PORT2 || 5000;
+
+proxy.listen(proxyPort, () => console.log(`Proxy server started on port ${proxyPort}`));
 
 async function main() {
     await mongoose.connect(MONGO_URL);
-    app.listen(3000, () => {
-        console.log("Server started on port 3000")
+    app.listen(port, () => {
+        console.log(`Server started on port ${port}`)
     });
 }
 

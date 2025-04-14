@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Header } from "../components/header";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { backendUrl } from "../url.js";
 
 export function Signup() {
   const [email, setEmail] = useState('');
@@ -60,7 +61,7 @@ export function Signup() {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/signup", { email, password, conPassword });
+      const response = await axios.post(`${backendUrl}/api/signup`, { email, password, conPassword });
       console.log(response);
       if (!response.data.message) {
         localStorage.setItem("token", response.data.token);

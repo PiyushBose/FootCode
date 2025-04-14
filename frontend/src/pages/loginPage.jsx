@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 import { Header } from "../components/header";
 import { useNavigate } from "react-router-dom";
+import { backendUrl } from "../url.js";
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -59,7 +60,7 @@ export function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/api/login", { email, password });
+      const response = await axios.post(`${backendUrl}/api/login`, { email, password });
 
       if (!response.data.message) {
         localStorage.setItem("token", response.data.token);

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { AuthHeader } from "../components/loggedinHeader";
 import { Table } from "../components/table";
 import { Players } from "../components/players";
+import { proxyUrl } from "../url.js";
+import { Header } from "../components/header.jsx";
 
 export function LeagueInfo() {
     const id = localStorage.getItem("leagueId");
@@ -26,7 +28,7 @@ export function LeagueInfo() {
     useEffect(() => {
         async function fetchName() {
             try {
-                const response = await axios.get("http://localhost:5000/api/competitions");
+                const response = await axios.get(`${proxyUrl}/api/competitions`);
                 const competitions = response.data.competitions;
                 const comp = competitions.find(c => String(c.id) === String(id));
                 if (comp) {
@@ -47,7 +49,7 @@ export function LeagueInfo() {
 
         async function fetchTable() {
             try {
-                const response = await axios.get(`http://localhost:5000/api/competitions/${code}/standings`);
+                const response = await axios.get(`${proxyUrl}/api/competitions/${code}/standings`);
                 const standings = response.data.standings;
                 if (standings && standings.length > 0) {
                     setTable(standings[0].table);
@@ -59,7 +61,7 @@ export function LeagueInfo() {
 
         async function fetchStats() {
             try {
-                const response = await axios.get(`http://localhost:5000/api/competitions/${code}/scorers`);
+                const response = await axios.get(`${proxyUrl}/api/competitions/${code}/scorers`);
                 setStats(response.data.scorers);
             } catch (e) {
                 console.error("Error fetching top scorers:", e);
@@ -72,7 +74,7 @@ export function LeagueInfo() {
 
     return (
         <div style={{ backgroundColor: "#f3fcf1" }}>
-            <AuthHeader />
+            {localStorage.getItem("token") ? <AuthHeader /> : <Header />}
 
             <div style={{
                 display: "flex",
